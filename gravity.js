@@ -14,6 +14,6 @@ window.onload = function()
 {
     while (true) //The main simulation loop
     {
-    
+        return false;
     }
 }
