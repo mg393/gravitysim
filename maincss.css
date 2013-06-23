@@ -1,6 +1,22 @@
 body {
 	background-color: #111;
 }
+#header, #footer {
+	font-family: "Verdana", sans-serif;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+}
+#header {
+	color: #FFF;
+	margin-left:-400px;
+	margin-top:-365px;
+}
+#footer {
+	color: #777;
+	margin-left:165px;
+	margin-top:280px;
+}
 #mainCanvas {
 	position: fixed;
 	top: 50%;
@@ -19,7 +35,7 @@ body {
 	margin-top: -300px;
 	z-index: -1;
 	
-	background-color: #0088CC;
+	background-color: #08C;
 	border-top-right-radius: 20px;
 	border-bottom-right-radius: 20px;
 }
