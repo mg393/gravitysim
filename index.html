@@ -1,8 +1,32 @@
+<!DOCTYPE html>
 <html>
 <head>
-<script type="text/JavaScript" src="gravity.js"></script>
+<link rel="stylesheet" type="text/css" href="maincss.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+<script>
+var winWidth = window.innerWidth;
+var posit = (winWidth / 2);
+var vector = 210;
+var inverse = -1;
+vector *= inverse;
+posit += vector;
+$(document).ready(function(){
+	$("#menuCanvas").click(function(){
+		$(this).animate({left:posit}, 350, 'swing');
+		vector *= inverse;
+		posit += vector;
+	});
+});		//Wow I can't believe it actually works
+</script>
+<!--<script type="text/JavaScript" src="gravity.js"></script> commented for now so page will load and show how elements are positioned-->
 </head>
-<body>
-<canvas id="mainCanvas" width="800" height="600"></canvas>
-</body>
+	<body>
+		<div>
+			<canvas id="mainCanvas" width="800" height="600"></canvas>
+		</div>
+		<div>
+			<canvas id="menuCanvas" width="220" height="600"></canvas>
+		</div>
+	</body>
 </html>

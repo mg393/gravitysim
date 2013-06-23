@@ -1,0 +1,22 @@
+#mainCanvas {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left:-400px;
+	margin-top:-300px;
+	z-index: 1;
+	
+	background-color: #1a1a1a;
+}
+#menuCanvas {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: 410px;
+	margin-top: -300px;
+	z-index: -1;
+	
+	background-color: #0088CC;
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+}

@@ -2,6 +2,9 @@ SUPER DESIGN DOC
 
 //TODO
 Make the application
+Make it so blue sidebar doesn't get messed up when you resize the browser
+	For now just don't resize browser after loading page until fixed
+	Or do I mean w/e
 
 //TOTO
 I bless the rains down in Africa
