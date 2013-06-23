@@ -5,8 +5,9 @@ var inverse = -1;
 vector *= inverse;
 posit += vector;
 $(document).ready(function(){
-	$("#menuCanvas").click(function(){
+	$("#menuBG").click(function(){
 		$(this).animate({left:posit}, 350, 'swing');
+		$("#menuCanvas").animate({left:posit}, 350, 'swing');
 		vector *= inverse;
 		posit += vector;
 	});
