@@ -1,23 +1,37 @@
 //Physics constants and functions
 var G = 6.675e-11
 var objects = [];
+var scale = 1000000; //One pixel = 1000km or 1000000m
 
-function object(r, m, x, y, h, v) //r = radius, m = mass, x = x coord, y = y coord, h = horizontal velocity, v = vertical velocity
+function object(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord, y = y coord, hv = horizontal velocity, vv = vertical velocity, ha = horizontal acceleration, va = vertical acceleration
 {
     this.radius = r;
     this.mass = m;
     this.x = x;
     this.y = y;
-    this.hvelocity = h;
-    this.vvelocity = v;
+    this.hvelocity = hv;
+    this.vvelocity = vv;
+    this.hacceleration = ha;
+    this.vaccereeration = va;
 }
 
-function simulation(c, o) //c = canvas, o = objects 
+function simulation(c, o, t) //c = canvas, o = objects, t = time between steps
 {
     this.canvas = c;
-    this.step = function(){
-    
-        //this.draw(c, o); //need to be last
+    this.objects = o;
+    this.steptime = t;
+    this.step = function(){ //use S = ut + 0.5at^2
+        var hvel = o.hvelocity;
+        var vvel = o.vvelocity;
+        var hacc = o.hacceleration;
+        var vacc = o.vacceleration;
+        
+        var hdistance = hvel*this.steptime + 0.5*hacc*(this.steptime^2);
+        var vdistance = vvel*this.steptime + 0.5*vacc*(this.steptime^2);
+        
+        o.x += hdistance / scale;
+        o.y += vdistance / scale;
+        draw(c, o); //need to be last
     }
 }
 
@@ -27,6 +41,8 @@ function calcForce(mass1, mass2, distance)
 }
 
 //Page functions
+var finished = false;
+
 function draw(c, o) //C = canvas, o = objects (array)
 {
     var canvas = c;
@@ -44,19 +60,14 @@ function draw(c, o) //C = canvas, o = objects (array)
 function mainloop(sim) //sim = a simulation
 {
     sim.step();
-    setTimeout('mainloop()', 35);
+    setTimeout('mainloop()', 30);
 }
 
-window.onload = function()
-{   
+window.onload = function() {
     canvas = document.getElementById("mainCanvas");
-    var testObject = new object(6, 50, 100, 100, 10, 10);
-    draw(canvas, testObject);
+    var testObject = new object(6, 50, 100, 100, 10, 10, 1, 1);
     //TODO: find a way to get mouse x and y from canvas click
-    mainsim = new simulation(canvas);
-    while (true) //The main simulation loop
-    {
-        //mainloop(mainsim);
-        return false;
-    }
+    mainsim = new simulation(canvas, testObject, 5);
+    var intervalID = window.setInterval(mainloop(mainsim), 30);
 }
+
