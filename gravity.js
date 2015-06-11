@@ -20,18 +20,19 @@ function simulation(c, o, t) //c = canvas, o = objects, t = time between steps
     this.canvas = c;
     this.objects = o;
     this.steptime = t;
+    console.log("pants");
     this.step = function(){ //use S = ut + 0.5at^2
         var hvel = o.hvelocity;
         var vvel = o.vvelocity;
         var hacc = o.hacceleration;
         var vacc = o.vacceleration;
-        
+
         var hdistance = hvel*this.steptime + 0.5*hacc*(this.steptime^2);
         var vdistance = vvel*this.steptime + 0.5*vacc*(this.steptime^2);
-        
+
         o.x += hdistance / scale;
         o.y += vdistance / scale;
-        draw(c, o); //need to be last
+        draw(c, o); //needs to be last
     }
 }
 
@@ -48,7 +49,7 @@ function draw(c, o) //C = canvas, o = objects (array)
     var canvas = c;
     var context = canvas.getContext("2d");
     context.fillStyle="pink";
-    context.strokeStyle="pink"
+    context.strokeStyle="pink";
     context.beginPath();
     context.arc(o.x, o.y, o.radius, 0, 2*Math.PI);
     context.lineWidth = 1;
@@ -59,7 +60,11 @@ function draw(c, o) //C = canvas, o = objects (array)
 
 function mainloop(sim) //sim = a simulation
 {
-    sim.step();
+    try {
+      sim.step();
+    } catch(e) {
+      console.log("yolo swaggins");
+    }
     setTimeout('mainloop()', 30);
 }
 
@@ -69,5 +74,5 @@ window.onload = function() {
     //TODO: find a way to get mouse x and y from canvas click
     mainsim = new simulation(canvas, testObject, 5);
     var intervalID = window.setInterval(mainloop(mainsim), 30);
-}
 
+}
