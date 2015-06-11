@@ -12,7 +12,7 @@ function object(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord,
     this.hvelocity = hv;
     this.vvelocity = vv;
     this.hacceleration = ha;
-    this.vaccereeration = va;
+    this.vacceleration = va;
 }
 
 function simulation(c, o, t) //c = canvas, o = objects, t = time between steps
@@ -27,11 +27,13 @@ function simulation(c, o, t) //c = canvas, o = objects, t = time between steps
         var hacc = o.hacceleration;
         var vacc = o.vacceleration;
 
+        console.log("o.vvelocity: " + o.vvelocity + "vvel: " + vvel + "o.vacceleration: " + o.vacceleration)
         var hdistance = hvel*this.steptime + 0.5*hacc*(this.steptime^2);
         var vdistance = vvel*this.steptime + 0.5*vacc*(this.steptime^2);
 
-        o.x += hdistance / scale;
-        o.y += vdistance / scale;
+        console.log("Vdistance: " + vdistance + " Vacc: " + vacc)
+        o.x += hdistance;
+        o.y += vdistance/* / scale*/;
         draw(c, o); //needs to be last
     }
 }
@@ -46,11 +48,12 @@ var finished = false;
 
 function draw(c, o) //C = canvas, o = objects (array)
 {
-    var canvas = c;
-    var context = canvas.getContext("2d");
+    var context = c.getContext("2d");
     context.fillStyle="pink";
     context.strokeStyle="pink";
     context.beginPath();
+    //console.log(o.x);
+    //console.log(o.y);
     context.arc(o.x, o.y, o.radius, 0, 2*Math.PI);
     context.lineWidth = 1;
     context.fill();
@@ -65,12 +68,12 @@ function mainloop(sim) //sim = a simulation
     } catch(e) {
       console.log("yolo swaggins");
     }
-    setTimeout('mainloop()', 30);
+    setTimeout(function() { mainloop(sim) }, 30)
 }
 
 window.onload = function() {
     canvas = document.getElementById("mainCanvas");
-    var testObject = new object(6, 50, 100, 100, 10, 10, 1, 1);
+    var testObject = new object(6, 100, 100, 101, 10, 10, 1, 1);
     //TODO: find a way to get mouse x and y from canvas click
     mainsim = new simulation(canvas, testObject, 5);
     var intervalID = window.setInterval(mainloop(mainsim), 30);
