@@ -8,9 +8,31 @@ function calcForce(mass1, mass2, distance)
     return ((G*mass1*mass2)/distance^2);
 }
 
+function calcDistance(o1, o2)
+{
+    return(Math.sqrt((o1.x + o2.x)^2 + (o1.y + o2.y)^2));
+}
+
 function calcAcc(force, mass)
 {
     return (force/mass);
+}
+
+function calcAngle(o1, o2)
+{
+    var dX = o1.x - o2.x;
+    var dY = o1.y - o2.y;
+    return Math.atan2(dX, dY) * 180 / Math.PI;
+}
+
+function calcXforce(angle, force)
+{
+    return(Math.sin(angle) * force);
+}
+
+function calcYforce(angle, force)
+{
+    return(Math.cos(angle) * force);
 }
 
 //Other global values
@@ -40,9 +62,18 @@ function simulation(c, o, t) //c = canvas, o = objects, t = time between steps
     this.step = function(){ //use S = ut + 0.5at^2
         for (var i = 0; i<o.length; i++) {
           //Gravity force calcs
-          //for (var i = 0; i <objects.length; i++) {
-            //if (o[i].ID)
-          //}
+          for (var j = 0; j <objects.length; j++) {
+            //if (objects[i] == o[i]) {
+              //do nothing
+            //} else {
+                var force = calcForce(objects[j].mass, o[i].mass, calcDistance(objects[j], o[i]));
+                var forceX = calcXforce(calcAngle(o[i], objects[j]), force);
+                var forceY = calcYforce(calcAngle(o[i], objects[j]), force);
+                o[i].hacceleration = calcAcc(forceX, o[i].mass);
+                o[i].vacceleration = calcAcc(forceY, o[i].mass);
+            //}
+
+          }
 
           //Speed and displacement calcs
           var hvel = o[i].hvelocity;
@@ -50,7 +81,7 @@ function simulation(c, o, t) //c = canvas, o = objects, t = time between steps
           var hacc = o[i].hacceleration;
           var vacc = o[i].vacceleration;
 
-          console.log("o.vvelocity: " + o[i].vvelocity + "vvel: " + vvel + "o.vacceleration: " + o[i].vacceleration)
+          //console.log("o.vvelocity: " + o[i].vvelocity + "vvel: " + vvel + "o.vacceleration: " + o[i].vacceleration)
           var hdistance = hvel*this.steptime + 0.5*hacc*(this.steptime^2);
           var vdistance = vvel*this.steptime + 0.5*vacc*(this.steptime^2);
 
@@ -103,7 +134,7 @@ function mainloop(sim) //sim = a simulation
 window.onload = function() {
     canvas = document.getElementById("mainCanvas");
     var testObject = new object(6, 100, 100, 101, 100000, 100000, 1000000, 100000);
-    var testObject2 = new object(8, 500, 500, 450, -5000, -5000, -1000000, -100000);
+    var testObject2 = new object(8, 150, 500, 150, -5000, -5000, -1000000, -100000);
 
     var testObjects = [testObject, testObject2];
     console.log(testObjects.length);
