@@ -1,0 +1,306 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"outp",
+				"outputLine"
+			],
+			[
+				"output",
+				"outputLine"
+			],
+			[
+				"lo",
+				"lowerBoundary"
+			],
+			[
+				"out",
+				"outputLine"
+			],
+			[
+				"outpu",
+				"outputArray"
+			],
+			[
+				"e",
+				"e"
+			],
+			[
+				"group",
+				"groupGranularity"
+			],
+			[
+				"ti",
+				"timeStart"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 104.0,
+		"last_filter": "install",
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"packagecont",
+				"Package Control: Install Package"
+			],
+			[
+				"hex",
+				"Preferences: Hex Viewer Settings – Default"
+			]
+		],
+		"width": 416.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os; pr='Preferences.sublime-settings'; ip='ignored_packages'; n='Package Control'; s=sublime.load_settings(pr); ig=s.get(ip); ig.append(n); s.set(ip,ig); sublime.save_settings('Preferences.sublime-settings'); pf=n+'.sublime-package'; urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler())); by=urllib.request.urlopen('https://packagecontrol.io/'+pf.replace(' ','%20')).read(); open(os.path.join(sublime.installed_packages_path(),pf),'wb').write(by); ig.remove(n); s.set(ip,ig); sublime.save_settings(pr); print('Package Control: 3.0.0 upgrade successful!')",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"import urllib2,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); os.makedirs( ipp ) if not os.path.exists(ipp) else None; urllib2.install_opener( urllib2.build_opener( urllib2.ProxyHandler()) ); by = urllib2.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); open( os.path.join( ipp, pf), 'wb' ).write(by) if dh == h else None; print('Error validating download (got %s instead of %s), please try manual install' % (dh, h) if dh != h else 'Please restart Sublime Text to finish installation')"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/Jack/Documents/GitHub/gravitysim"
+	],
+	"file_history":
+	[
+		"/C/Users/Jack/gravitysim/gravity.js",
+		"/C/Program Files/MySQL/MySQL Server 5.6/my-default.ini",
+		"/C/Users/Jack/Downloads/mysql-5.6.25-winx64/mysql-5.6.25-winx64/README",
+		"/C/Users/Jack/Downloads/eclipse/configuration/.settings/org.eclipse.ui.ide.prefs",
+		"/C/Users/Jack/webdev/turbo-degenerate/app/index.html",
+		"/C/Users/Jack/webdev/turbo-degenerate/app/scripts/text.json",
+		"/C/Users/Jack/Documents/index.html",
+		"/C/Users/Jack/webdev/turbo-degenerate/app/styles/main.scss",
+		"/C/Users/Jack/AppData/Roaming/Sublime Text 3/Packages/User/ColorHighlighter.sublime-settings",
+		"/C/Users/Jack/AppData/Roaming/Sublime Text 3/Packages/Color Highlighter/ColorHighlighter.sublime-settings",
+		"/C/Users/Jack/Downloads/download",
+		"/C/Users/Jack/Documents/hours.csv",
+		"/C/Users/Jack/Downloads/hoursscript.js",
+		"/C/Users/Jack/webdev/turbo-degenerate/hours.csv",
+		"/C/Users/Jack/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/Jack/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Jack/haskell/baby.hs",
+		"/C/Users/Jack/webdev/turbo-degenerate/package.json",
+		"/C/Users/Jack/webdev/first/index.html",
+		"/C/Users/Jack/webdev/first/main.js",
+		"/C/Users/Jack/Downloads/hungary.note",
+		"/E/Arts/Pirate Ship Colours/Purple.png",
+		"/E/Arts/Pirate Ship Colours/Maroonish.png",
+		"/E/Arts/Pirate Ship Colours/Golden Brown.png",
+		"/E/Arts/Pirate Ship Colours/Beige.png",
+		"/E/Web Projects/farfisa/farfisaoutput.json",
+		"/C/Users/Jack/Downloads/Minecraft/server/logs/latest.log",
+		"/C/Users/Jack/Downloads/Minecraft/server/server.properties",
+		"/C/Users/Jack/Documents/font-awesome thing/index.html",
+		"/E/web projects/XAMPP/htdocs/fat/index.html",
+		"/E/Web Projects/XAMPP/htdocs/fatCopy/index.html",
+		"/C/Users/Jack/Downloads/TestSite2/TestSite2/jsmain.js",
+		"/E/Web Projects/font-awesome thing/henners.jpg",
+		"/E/Web Projects/font-awesome thing/index.html",
+		"/C/Users/Jack/Documents/HTML5 Projects/Test/index.html",
+		"/C/Users/Jack/Documents/HTML5 Projects/Test/test.js",
+		"/C/Users/Jack/Documents/js-stuff/index.html",
+		"/C/Users/Jack/Documents/js-stuff/script.js",
+		"/C/Users/Jack/Downloads/aics_scripts_en/aics_scripts_en/Metaball (Arc).jsx",
+		"/C/Users/Jack/Downloads/colorpicker/refresh_web/prototype.js",
+		"/C/Users/Jack/Documents/js-stuff/script.js#",
+		"/C/Users/Jack/Downloads/timer_code.html",
+		"/C/Users/Jack/Downloads/impressivewebs-HTML9-Responsive-Boilerstrap-js-98c58d0/impressivewebs-HTML9-Responsive-Boilerstrap-js-98c58d0/js/html9responsiveboilerstrap.js",
+		"/C/Users/Jack/AppData/Roaming/Sublime Text 3/Packages/HexViewer/hex_viewer.sublime-settings",
+		"/C/Users/Jack/Downloads/Mastodon_-_Blood_And_Thunder_(2).mid",
+		"/E/Programs/MongoDB/bin/mongod.pdb"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 90.0,
+		"where_history":
+		[
+			"<current file>",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"am",
+			"ruler",
+			"100",
+			"fizzlessBuzzless",
+			"log",
+			";\n",
+			",",
+			"(\\r|\\n|\\t)",
+			"x",
+			"color",
+			"object",
+			"color",
+			"yCoord",
+			"xCoord",
+			"window",
+			"getTime"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"",
+			"','",
+			","
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.hex_viewer_inspector":
+	{
+		"height": 100.0
+	},
+	"pinned_build_system": "",
+	"project": "gravity-sim.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"C:\\Users\\Jack\\Documents\\js-stuff\\circly.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 243.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,19 @@
+body {
+	background-color: rgba(22, 26, 29, 1.0);
+}
+
+.content-container {
+	width: 800px;
+}
+
+.content-title {
+	color: white;
+}
+
+.content-footer {
+	color: white;
+}
+
+#canvas {
+	background-color: rgba(17, 19, 26, 1.0);
+}
