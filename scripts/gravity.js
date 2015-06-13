@@ -5,7 +5,7 @@ var scale = 1000000; //One pixel = 1000km or 1000000m
 
 function calcForce(mass1, mass2, distance)
 {
-    return ((G*mass1*mass2)/distance^2);
+    return ((G*mass1*scale*mass2*scale)/distance^2);
 }
 
 function calcDistance(o1, o2)
@@ -15,7 +15,7 @@ function calcDistance(o1, o2)
 
 function calcAcc(force, mass)
 {
-    return (force/mass);
+    return (force/(mass*scale));
 }
 
 function calcAngle(o1, o2)
@@ -56,25 +56,23 @@ function object(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord,
 function simulation(c, o, t) //c = canvas, o = objects, t = time between steps
 {
     this.canvas = c;
-    this.objects = o;
     this.steptime = t;
     console.log("pants");
     console.log(o.length);
+    console.log(objects.length);
     this.step = function(){ //use S = ut + 0.5at^2
         for (var i = 0; i<o.length; i++) {
           //Gravity force calcs
-          for (var j = 0; j <objects.length; j++) {
-            //if (objects[i] == o[i]) {
-              //do nothing
-            //} else {
-                var force = calcForce(objects[j].mass, o[i].mass, calcDistance(objects[j], o[i]));
-                var forceX = calcXforce(calcAngle(o[i], objects[j]), force);
-                var forceY = calcYforce(calcAngle(o[i], objects[j]), force);
-                o[i].hacceleration = calcAcc(forceX, o[i].mass);
-                o[i].vacceleration = calcAcc(forceY, o[i].mass);
-            //}
-
+          for (var j = 0; j <o.length; j++) {
+                var force = calcForce(o[j].mass, o[i].mass, calcDistance(o[j], o[i]));
+                var forceX = calcXforce(calcAngle(o[i], o[j]), force);
+                var forceY = calcYforce(calcAngle(o[i], o[j]), force);
+                o[i].hacceleration += scale*calcAcc(forceX, o[i].mass);
+                o[i].vacceleration += scale*calcAcc(forceY, o[i].mass);
+                console.log(o[i].ID);
           }
+
+          console.log("ID: " + o[i].ID + " Acceleration: " + o[i].hacceleration + " " + o[i].vacceleration)
 
           //Speed and displacement calcs
           var hvel = o[i].hvelocity;
@@ -105,15 +103,13 @@ function draw(c, o) //C = canvas, o = objects (array)
 
     //TODO: Colour handling or random colour generator
     //Loop through objects
-    console.log(o.length);
+    //console.log(o.length);
     for (var i = 0; i<o.length; i++) {
       //console.log("captain cabinets");
       //console.log("trapped in cabinets");
       context.fillStyle=o[i].colour;
       context.strokeStyle=o[i].colour;
       context.beginPath();
-      //console.log(o[i].x);
-      //console.log(o[i].y);
       context.arc(o[i].x, o[i].y, o[i].radius, 0, 2*Math.PI);
       context.lineWidth = 1;
       context.fill();
@@ -129,7 +125,7 @@ function mainloop(sim) //sim = a simulation
       console.log("yolo swaggins");
       console.log(e);
     }
-    
+
     window.requestAnimationFrame(function() {
       mainloop(sim);
     })
@@ -137,8 +133,9 @@ function mainloop(sim) //sim = a simulation
 
 window.onload = function() {
     canvas = document.getElementById("canvas");
-    var testObject = new object(6, 100, 100, 101, 100000, 100000, 1000000, 100000);
-    var testObject2 = new object(8, 150, 500, 150, -5000, -5000, -1000000, -100000);
+    //r, m, x, y, hv, vv, ha, va
+    var testObject = new object(3, 30, 100, 101, 100, 100, 100000, 100000);
+    var testObject2 = new object(10, 100, 500, 150, -50, -50, -100000, -100000);
 
     var testObjects = [testObject, testObject2];
     console.log(testObjects.length);
