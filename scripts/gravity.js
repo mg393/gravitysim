@@ -80,15 +80,22 @@ function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time
                 var forceY = calcYforce(calcAngle(o[i], o[j]), force);
                 totalVAcc += calcAcc(forceX, o[i].mass * massScale);
                 totalHAcc += calcAcc(forceY, o[i].mass * massScale);
+
+                if (graphWriteCount >= 10 && o[i].ID == 1) {
+                    cc.addData([force], labelCount);
+                    if (labelCount >= 600) {
+                        cc.removeData();
+                    }
+                    graphWriteCount = 0;
+                }
             }
 
             o[i].hacceleration = totalHAcc;
             o[i].vacceleration = totalVAcc;
 
             //Speed and displacement calcs
-            //v = u + at
-            var hvel = o[i].hvelocity + o[i].hacceleration*this.steptime;
-            var vvel = o[i].vvelocity + o[i].vacceleration*this.steptime;
+            var hvel = o[i].hvelocity;
+            var vvel = o[i].vvelocity;
 
             var hacc = o[i].hacceleration;
             var vacc = o[i].vacceleration;
@@ -97,17 +104,13 @@ function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time
             var hdistance = hvel * this.steptime + 0.5 * hacc * Math.pow(this.steptime, 2);
             var vdistance = vvel * this.steptime + 0.5 * vacc * Math.pow(this.steptime, 2);
 
+            //v = u + at
+            o[i].hvelocity = hvel + o[i].hacceleration*this.steptime;
+            o[i].vvelocity = vvel + o[i].vacceleration*this.steptime;
+
             o[i].x += hdistance / distScale;
             o[i].y += vdistance / distScale;
             console.log(o[i].x + " " + o[i].y);
-
-            if (graphWriteCount >= 10 && o[i].ID === 0) {
-                cc.addData([o[i].x], labelCount);
-                if (labelCount >= 600) {
-                    cc.removeData();
-                }
-                graphWriteCount = 0;
-            }
         }
 
         //Add 1 to counts
