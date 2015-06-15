@@ -1,15 +1,13 @@
 //Physics constants and functions
 var G = 6.675e-11;
 var objects = [];
-var distScale = 1000000; //One pixel = 1000km or 1000000m
-var massScale = 1000000000000000000000000; //One arbitrary mass unit = 1e23kg
 
 function calcForce(mass1, mass2, distance) {
-    return ((G * mass1 * distScale * mass2 * distScale) / Math.pow(distance, 2));
+    return ((G * mass1 * mass2) / Math.pow(distance, 2));
 }
 
 function calcDistance(o1, o2) {
-    return (distScale * (Math.sqrt(Math.pow((o1.x + o2.x), 2) + Math.pow((o1.y + o2.y), 2))));
+    return ((Math.sqrt(Math.pow((o1.x + o2.x), 2) + Math.pow((o1.y + o2.y), 2))));
 }
 
 function calcAcc(force, mass) {
@@ -73,13 +71,14 @@ function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time
             var totalVAcc = 0;
             var totalHAcc = 0;
 
+            console.log(o.length);
             //Gravity force calcs
             for (var j = 0; j < o.length; j++) {
-                var force = calcForce(o[j].mass * massScale, o[i].mass * massScale, calcDistance(o[j], o[i]) * distScale);
+                var force = 1e9*calcForce(o[j].mass, o[i].mass, calcDistance(o[j], o[i]));
                 var forceX = calcXforce(calcAngle(o[i], o[j]), force);
                 var forceY = calcYforce(calcAngle(o[i], o[j]), force);
-                totalVAcc += calcAcc(forceX, o[i].mass * massScale);
-                totalHAcc += calcAcc(forceY, o[i].mass * massScale);
+                totalVAcc += calcAcc(forceX, o[i].mass);
+                totalHAcc += calcAcc(forceY, o[i].mass);
 
                 if (graphWriteCount >= 10 && o[i].ID == 1) {
                     cc.addData([force], labelCount);
@@ -108,8 +107,8 @@ function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time
             o[i].hvelocity = hvel + o[i].hacceleration*this.steptime;
             o[i].vvelocity = vvel + o[i].vacceleration*this.steptime;
 
-            o[i].x += hdistance / distScale;
-            o[i].y += vdistance / distScale;
+            o[i].x += hdistance;
+            o[i].y += vdistance;
             console.log(o[i].x + " " + o[i].y);
         }
 
@@ -162,9 +161,9 @@ window.onload = function() {
     var mainChart = new Chart(chartContext).Line(chartData);
 
     //r, m, x, y, hv, vv, ha, va
-    var testObject = new object(20, 20, 500, 150, 100000, 100000, 10, 10);
-    var testObject2 = new object(10, 10, 100, 150, -50000, -50000, 10, 10);
-    var testObject3 = new object(15, 10, 550, 550, -60000, -60000, 10, 10);
+    var testObject = new object(20, 200, 500, 150, 0.1, 0.1, 10, 10);
+    var testObject2 = new object(10, 1000, 100, 150, -0.05, -0.05, 10, 10);
+    var testObject3 = new object(15, 1000, 550, 550, -0.06, -0.06, 10, 10);
 
     var testObjects = [testObject, testObject2, testObject3];
     mainsim = new simulation(canvas, mainChart, testObjects, 5);
