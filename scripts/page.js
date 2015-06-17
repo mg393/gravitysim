@@ -1,14 +1,37 @@
-// lol look at me
-// 2cool2usejquery
-// swag
+var sidebar = $('.sidebar');
+var setting = $('.settings-component');
 
-var sidebar = document.querySelector('.sidebar');
-var settingsWheel = document.querySelector('.fa-cog');
-
-sidebar.addEventListener('mouseenter', function() {
-  settingsWheel.classList.add('fa-spin');
+sidebar.hover(function() {
+  $(this).find('.fa-cog').addClass('fa-spin');
+}, function() {
+  $(this).find('.fa-cog').removeClass('fa-spin');
 });
 
-sidebar.addEventListener('mouseleave', function() {
-  settingsWheel.classList.remove('fa-spin');
+setting.on('click', function(e) {
+  var node = $(e.currentTarget),
+      action = node.data('action');
+
+  switch(action) {
+    case 'print':
+      print();
+      break;
+    case 'clear':
+      clear();
+      break;
+    default:
+      break;
+  }
 });
+
+function print() {
+  console.log(objects);
+}
+
+function clear() {
+  console.log('not sure why, but this don\'t do shit, even though it deletes all the objects.');
+  console.log('Look: ', objects);
+  objects = [];
+  console.log('Look again: ', objects);
+  console.log('Look at the screen...');
+  console.log('...what');
+}
