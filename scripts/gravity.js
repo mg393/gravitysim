@@ -45,6 +45,25 @@ var chartData = {
 var graphWriteCount = 0;
 var labelCount = 0;
 
+//Other functions
+function addObject(x, y)
+{
+    //r, m, x, y, hv, vv, ha, va
+    var newObject = new object(10, 1000, x, y, 0.4, 0.4, 0, 0);
+    objects.push(newObject);
+}
+
+function getPosition(canvas)
+{
+  var x = event.x;
+  var y = event.y;
+
+  x -= canvas.offsetLeft;
+  y -= canvas.offsetTop;
+
+  addObject(x, y);
+}
+
 //Main code
 function object(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord, y = y coord, hv = horizontal velocity, vv = vertical velocity, ha = horizontal acceleration, va = vertical acceleration
 {
@@ -80,7 +99,7 @@ function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time
                 totalVAcc += calcAcc(forceX, o[i].mass);
                 totalHAcc += calcAcc(forceY, o[i].mass);
 
-                if (graphWriteCount >= 10 && o[i].ID == 1) {
+                if (graphWriteCount >= 10 && o[i].ID == 0) {
                     cc.addData([force], labelCount);
                     if (labelCount >= 600) {
                         cc.removeData();
@@ -155,18 +174,22 @@ function mainloop(sim) //sim = a simulation
 
 window.onload = function() {
     canvas = document.getElementById("canvas");
+
+    canvas.addEventListener("mousedown", function(event) {getPosition(canvas);}, false);
     chartCanvas = document.getElementById("chartCanvas");
     chartContext = chartCanvas.getContext("2d");
 
     var mainChart = new Chart(chartContext).Line(chartData);
 
     //r, m, x, y, hv, vv, ha, va
-    var testObject = new object(20, 200, 500, 150, 0.1, 0.1, 10, 10);
-    var testObject2 = new object(10, 1000, 100, 150, -0.05, -0.05, 10, 10);
-    var testObject3 = new object(15, 1000, 550, 550, -0.06, -0.06, 10, 10);
+    var testObject = new object(25, 2500, 400, 300, 0, 0, 0, 0);
+    var testObject2 = new object(10, 1000, 100, 150, 0.05, 0.05, 0, 0);
+    var testObject3 = new object(15, 1000, 550, 550, -0.06, -0.03, 0, 0);
 
-    var testObjects = [testObject, testObject2, testObject3];
-    mainsim = new simulation(canvas, mainChart, testObjects, 5);
+    objects.push(testObject);
+    objects.push(testObject2);
+    objects.push(testObject3);
+    mainsim = new simulation(canvas, mainChart, objects, 5);
     window.requestAnimationFrame(function() {
         mainloop(mainsim);
     });
