@@ -18,6 +18,9 @@ setting.on('click', function(e) {
     case 'clear':
       clear();
       break;
+    case 'pause':
+      pause();
+      break;
     default:
       break;
   }
@@ -28,10 +31,21 @@ function print() {
 }
 
 function clear() {
-  console.log('not sure why, but this don\'t do shit, even though it deletes all the objects.');
+  /*console.log('not sure why, but this don\'t do shit, even though it deletes all the objects.');
   console.log('Look: ', objects);
   objects = [];
   console.log('Look again: ', objects);
   console.log('Look at the screen...');
-  console.log('...what');
+  console.log('...what');*/
+  clearObjects();
+}
+
+function pause() {
+  paused = !paused;
+  if (paused == false)
+  {
+     document.getElementById("settings-option").innerHTML = "Pause Simulation";
+  } else {
+     document.getElementById("settings-option").innerHTML = "Resume Simualtion";
+  }
 }

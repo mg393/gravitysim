@@ -44,24 +44,27 @@ var chartData = {
 };
 var graphWriteCount = 0;
 var labelCount = 0;
+var paused = false;
 
 //Other functions
-function addObject(x, y)
-{
+function addObject(x, y) {
     //r, m, x, y, hv, vv, ha, va
     var newObject = new object(10, 1000, x, y, 0.4, 0.4, 0, 0);
     objects.push(newObject);
 }
 
-function getPosition(canvas)
-{
-  var x = event.x;
-  var y = event.y;
+function getPosition(canvas) {
+    var x = event.x;
+    var y = event.y;
 
-  x -= canvas.offsetLeft;
-  y -= canvas.offsetTop;
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
 
-  addObject(x, y);
+    addObject(x, y);
+}
+
+function clearObjects() {
+    objects.length = 0;
 }
 
 //Main code
@@ -86,55 +89,54 @@ function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time
     this.steptime = t;
     console.log("pants");
     this.step = function() {
-        for (var i = 0; i < o.length; i++) {
-            var totalVAcc = 0;
-            var totalHAcc = 0;
+        if (paused == false) {
+            for (var i = 0; i < o.length; i++) {
+                var totalVAcc = 0;
+                var totalHAcc = 0;
 
-            console.log(o.length);
-            //Gravity force calcs
-            for (var j = 0; j < o.length; j++) {
-                var force = 1e9*calcForce(o[j].mass, o[i].mass, calcDistance(o[j], o[i]));
-                var forceX = calcXforce(calcAngle(o[i], o[j]), force);
-                var forceY = calcYforce(calcAngle(o[i], o[j]), force);
-                totalVAcc += calcAcc(forceX, o[i].mass);
-                totalHAcc += calcAcc(forceY, o[i].mass);
+                //Gravity force calcs
+                for (var j = 0; j < o.length; j++) {
+                    var force = 1e9 * calcForce(o[j].mass, o[i].mass, calcDistance(o[j], o[i]));
+                    var forceX = calcXforce(calcAngle(o[i], o[j]), force);
+                    var forceY = calcYforce(calcAngle(o[i], o[j]), force);
+                    totalVAcc += calcAcc(forceX, o[i].mass);
+                    totalHAcc += calcAcc(forceY, o[i].mass);
 
-                if (graphWriteCount >= 10 && o[i].ID == 0) {
-                    cc.addData([force], labelCount);
-                    if (labelCount >= 600) {
-                        cc.removeData();
+                    if (graphWriteCount >= 10 && o[i].ID == 0) {
+                        cc.addData([force], labelCount);
+                        if (labelCount >= 600) {
+                            cc.removeData();
+                        }
+                        graphWriteCount = 0;
                     }
-                    graphWriteCount = 0;
                 }
+
+                o[i].hacceleration = totalHAcc;
+                o[i].vacceleration = totalVAcc;
+
+                //Speed and displacement calcs
+                var hvel = o[i].hvelocity;
+                var vvel = o[i].vvelocity;
+
+                var hacc = o[i].hacceleration;
+                var vacc = o[i].vacceleration;
+
+                //S = ut + 0.5at^2
+                var hdistance = hvel * this.steptime + 0.5 * hacc * Math.pow(this.steptime, 2);
+                var vdistance = vvel * this.steptime + 0.5 * vacc * Math.pow(this.steptime, 2);
+
+                //v = u + at
+                o[i].hvelocity = hvel + o[i].hacceleration * this.steptime;
+                o[i].vvelocity = vvel + o[i].vacceleration * this.steptime;
+
+                o[i].x += hdistance;
+                o[i].y += vdistance;
             }
 
-            o[i].hacceleration = totalHAcc;
-            o[i].vacceleration = totalVAcc;
-
-            //Speed and displacement calcs
-            var hvel = o[i].hvelocity;
-            var vvel = o[i].vvelocity;
-
-            var hacc = o[i].hacceleration;
-            var vacc = o[i].vacceleration;
-
-            //S = ut + 0.5at^2
-            var hdistance = hvel * this.steptime + 0.5 * hacc * Math.pow(this.steptime, 2);
-            var vdistance = vvel * this.steptime + 0.5 * vacc * Math.pow(this.steptime, 2);
-
-            //v = u + at
-            o[i].hvelocity = hvel + o[i].hacceleration*this.steptime;
-            o[i].vvelocity = vvel + o[i].vacceleration*this.steptime;
-
-            o[i].x += hdistance;
-            o[i].y += vdistance;
-            console.log(o[i].x + " " + o[i].y);
+            //Add 1 to counts
+            graphWriteCount++;
+            labelCount++;
         }
-
-        //Add 1 to counts
-        graphWriteCount++;
-        labelCount++;
-
         //Draw function. Needs to be last
         draw(c, o);
     };
@@ -175,7 +177,9 @@ function mainloop(sim) //sim = a simulation
 window.onload = function() {
     canvas = document.getElementById("canvas");
 
-    canvas.addEventListener("mousedown", function(event) {getPosition(canvas);}, false);
+    canvas.addEventListener("mousedown", function(event) {
+        getPosition(canvas);
+    }, false);
     chartCanvas = document.getElementById("chartCanvas");
     chartContext = chartCanvas.getContext("2d");
 

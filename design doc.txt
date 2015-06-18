@@ -8,3 +8,7 @@ Make it so blue sidebar doesn't get messed up when you resize the browser
 
 //TOTO
 I bless the rains down in Africa
+
+"mmmmmaybe a sort of three-tiered click system, so like click and drag to set size, move a certain distance from the object and click to set mass, do the same again to see speed/direction
+and just have an advanced, value-precise creator in the sidebar if people want to use that"
+-Toast, 2015
