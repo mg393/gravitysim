@@ -27,17 +27,11 @@ setting.on('click', function(e) {
 });
 
 function print() {
-  console.log(objects);
+  console.log(bodies);
 }
 
 function clear() {
-  /*console.log('not sure why, but this don\'t do shit, even though it deletes all the objects.');
-  console.log('Look: ', objects);
-  objects = [];
-  console.log('Look again: ', objects);
-  console.log('Look at the screen...');
-  console.log('...what');*/
-  clearObjects();
+  clearBodies();
 }
 
 function pause() {

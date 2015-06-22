@@ -1,13 +1,16 @@
 //Physics constants and functions
 var G = 6.675e-11;
-var objects = [];
+var bodies = [];
 
 function calcForce(mass1, mass2, distance) {
     return ((G * mass1 * mass2) / Math.pow(distance, 2));
 }
 
-function calcDistance(o1, o2) {
-    return ((Math.sqrt(Math.pow((o1.x + o2.x), 2) + Math.pow((o1.y + o2.y), 2))));
+function calcDistance(dx, dy) {
+    console.log("dX: " + dx + " dY: " + dy);
+    dx = parseInt(dx);
+    dy = parseInt(dy);
+    return (Math.sqrt(dx*dx - dy*dy));
 }
 
 function calcAcc(force, mass) {
@@ -47,10 +50,10 @@ var labelCount = 0;
 var paused = false;
 
 //Other functions
-function addObject(x, y) {
+function addBody(x, y) {
     //r, m, x, y, hv, vv, ha, va
-    var newObject = new object(10, 1000, x, y, 0.4, 0.4, 0, 0);
-    objects.push(newObject);
+    var newBody = new body(10, 1000, x, y, 0.4, 0.4, 0, 0);
+    bodies.push(newBody);
 }
 
 function getPosition(canvas) {
@@ -60,15 +63,15 @@ function getPosition(canvas) {
     x -= canvas.offsetLeft;
     y -= canvas.offsetTop;
 
-    addObject(x, y);
+    addBody(x, y);
 }
 
-function clearObjects() {
-    objects.length = 0;
+function clearBodies() {
+    bodies.length = 0;
 }
 
 //Main code
-function object(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord, y = y coord, hv = horizontal velocity, vv = vertical velocity, ha = horizontal acceleration, va = vertical acceleration
+function body(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord, y = y coord, hv = horizontal velocity, vv = vertical velocity, ha = horizontal acceleration, va = vertical acceleration
 {
     this.radius = r;
     this.mass = m;
@@ -83,63 +86,62 @@ function object(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord,
     IDcount++;
 }
 
-function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time between steps
+function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time between steps
 {
     this.canvas = c;
     this.steptime = t;
     console.log("pants");
     this.step = function() {
         if (paused == false) {
-            for (var i = 0; i < o.length; i++) {
+            for (var i = 0; i < b.length; i++) {
                 var totalVAcc = 0;
                 var totalHAcc = 0;
 
                 //Gravity force calcs
-                for (var j = 0; j < o.length; j++) {
-                    var force = 1e9 * calcForce(o[j].mass, o[i].mass, calcDistance(o[j], o[i]));
-                    var forceX = calcXforce(calcAngle(o[i], o[j]), force);
-                    var forceY = calcYforce(calcAngle(o[i], o[j]), force);
-                    totalVAcc += calcAcc(forceX, o[i].mass);
-                    totalHAcc += calcAcc(forceY, o[i].mass);
+                for (var j = 0; j < b.length; j++) {
+                  if(i != j) {
+                    var dX = b[i].x - b[j].x;
+                    var dY = b[i].y - b[j].y;
+                    var force = calcForce(b[j].mass, b[i].mass, calcDistance(dX, dY));
+                    var forceX = calcXforce(calcAngle(b[i], b[j]), force);
+                    var forceY = calcYforce(calcAngle(b[i], b[j]), force);
+                    totalVAcc += calcAcc(forceX, b[i].mass);
+                    totalHAcc += calcAcc(forceY, b[i].mass);
 
-                    if (i == j) {
-                      forceX = 0;
-                      forceY = 0;
-                    }
-
-                    console.log(o[i].ID + " " + o[j].ID);
-                    console.log(calcAngle(o[i], o[j]));
-                    console.log(calcDistance(o[i], o[j]));
+                    console.log(b[i].ID + " " + b[j].ID);
+                    console.log("Angle: " + calcAngle(b[i], b[j]));
+                    console.log("Distance: " + calcDistance(b[i], b[j]));
                     console.log("X component = " + forceX + ", Y component = " + forceY);
-                    if (graphWriteCount >= 10 && o[i].ID == 0) {
-                        cc.addData([force], labelCount);
+                    if (graphWriteCount >= 10 && b[i].ID == 0) {
+                        cc.addData([1], labelCount);
                         if (labelCount >= 600) {
                             cc.removeData();
                         }
                         graphWriteCount = 0;
                     }
                 }
+                }
 
-                o[i].hacceleration = totalHAcc;
-                o[i].vacceleration = totalVAcc;
+                b[i].hacceleration = totalHAcc;
+                b[i].vacceleration = totalVAcc;
 
                 //Speed and displacement calcs
-                var hvel = o[i].hvelocity;
-                var vvel = o[i].vvelocity;
+                var hvel = b[i].hvelocity;
+                var vvel = b[i].vvelocity;
 
-                var hacc = o[i].hacceleration;
-                var vacc = o[i].vacceleration;
+                var hacc = b[i].hacceleration;
+                var vacc = b[i].vacceleration;
 
                 //S = ut + 0.5at^2
                 var hdistance = hvel * this.steptime + 0.5 * hacc * Math.pow(this.steptime, 2);
                 var vdistance = vvel * this.steptime + 0.5 * vacc * Math.pow(this.steptime, 2);
 
                 //v = u + at
-                o[i].hvelocity = hvel + o[i].hacceleration * this.steptime;
-                o[i].vvelocity = vvel + o[i].vacceleration * this.steptime;
+                b[i].hvelocity = hvel + b[i].hacceleration * this.steptime;
+                b[i].vvelocity = vvel + b[i].vacceleration * this.steptime;
 
-                o[i].x += hdistance;
-                o[i].y += vdistance;
+                b[i].x += hdistance;
+                b[i].y += vdistance;
             }
 
             //Add 1 to counts
@@ -147,23 +149,23 @@ function simulation(c, cc, o, t) //c = canvas, cc = chart, o = objects, t = time
             labelCount++;
         }
         //Draw function. Needs to be last
-        draw(c, o);
+        draw(c, b);
     };
 }
 
-function draw(c, o) //C = canvas, o = objects (array)
+function draw(c, b) //C = canvas, b = bodies (array)
 {
     var context = c.getContext("2d");
 
     //Clear old stuff:
     context.clearRect(0, 0, c.width, c.height);
 
-    //Loop through objects
-    for (var i = 0; i < o.length; i++) {
-        context.fillStyle = o[i].colour;
-        context.strokeStyle = o[i].colour;
+    //Loop through bodiess
+    for (var i = 0; i < b.length; i++) {
+        context.fillStyle = b[i].colour;
+        context.strokeStyle = b[i].colour;
         context.beginPath();
-        context.arc(o[i].x, o[i].y, o[i].radius, 0, 2 * Math.PI);
+        context.arc(b[i].x, b[i].y, b[i].radius, 0, 2 * Math.PI);
         context.lineWidth = 1;
         context.fill();
         context.stroke();
@@ -195,12 +197,12 @@ window.onload = function() {
     var mainChart = new Chart(chartContext).Line(chartData);
 
     //r, m, x, y, hv, vv, ha, va
-    var testObject = new object(15, 1500, 200, 150, 0.0, 0, 0, 0);
-    var testObject2 = new object(15, 1500, 600, 250, 0.0, 0, 0, 0);
+    var testBody = new body(15, 1500, 200, 150, 0.0, 0, 0, 0);
+    var testBody2 = new body(15, 1500, 600, 250, 0.0, 0, 0, 0);
 
-    objects.push(testObject);
-    objects.push(testObject2);
-    mainsim = new simulation(canvas, mainChart, objects, 5);
+    bodies.push(testBody);
+    bodies.push(testBody2);
+    mainsim = new simulation(canvas, mainChart, bodies, 5);
     window.requestAnimationFrame(function() {
         mainloop(mainsim);
     });

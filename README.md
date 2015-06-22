@@ -3,6 +3,10 @@ gravitysim
 
 changelog
 ---------
+###31
++ Removed all references to "objects", now named "bodies" to avoid confusion. Replaced o[] with b[].
++ Progress towards functional gravity
+
 ###30
 + Fixed readme
 + Got started on fixing gravity
