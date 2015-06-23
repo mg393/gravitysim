@@ -7,9 +7,7 @@ function calcForce(mass1, mass2, distance) {
 }
 
 function calcDistance(dx, dy) {
-    console.log("dX: " + dx + " dY: " + dy);
-    dx = parseInt(dx);
-    dy = parseInt(dy);
+    console.log(dx, dy);
     return (Math.sqrt(dx*dx - dy*dy));
 }
 
@@ -18,9 +16,9 @@ function calcAcc(force, mass) {
 }
 
 function calcAngle(o1, o2) {
-    var dX = o1.x - o2.x;
-    var dY = o1.y - o2.y;
-    return (Math.atan2(dX, dY) * 180 / Math.PI);
+    var diffX = o1.x - o2.x;
+    var diffY = o1.y - o2.y;
+    return (Math.atan2(diffX, diffY) * 180 / Math.PI);
 }
 
 function calcXforce(angle, force) {
@@ -100,23 +98,27 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                 //Gravity force calcs
                 for (var j = 0; j < b.length; j++) {
                   if(i != j) {
-                    var dX = b[i].x - b[j].x;
-                    var dY = b[i].y - b[j].y;
-                    var force = calcForce(b[j].mass, b[i].mass, calcDistance(dX, dY));
-                    var forceX = calcXforce(calcAngle(b[i], b[j]), force);
-                    var forceY = calcYforce(calcAngle(b[i], b[j]), force);
+                    var dX = parseInt(b[i].x) - parseInt(b[j].x);
+                    var dY = parseInt(b[i].y) - parseInt(b[j].y);
+                    console.log(dX, dY);
+                    var distance = calcDistance(dX, dY);
+                    console.log(distance);
+                    var force = calcForce(b[j].mass, b[i].mass, distance);
+                    var forceX = -calcXforce(calcAngle(b[i], b[j]), force);
+                    var forceY = -calcYforce(calcAngle(b[i], b[j]), force);
                     totalVAcc += calcAcc(forceX, b[i].mass);
                     totalHAcc += calcAcc(forceY, b[i].mass);
 
+                    console.log("totalHAcc: " + totalHAcc + " totalVAcc: " + totalVAcc);
                     console.log(b[i].ID + " " + b[j].ID);
                     console.log("Angle: " + calcAngle(b[i], b[j]));
-                    console.log("Distance: " + calcDistance(b[i], b[j]));
+                    //console.log("Distance: " + calcDistance(b[i], b[j]));
                     console.log("X component = " + forceX + ", Y component = " + forceY);
                     if (graphWriteCount >= 10 && b[i].ID == 0) {
-                        cc.addData([1], labelCount);
-                        if (labelCount >= 600) {
-                            cc.removeData();
-                        }
+                        cc.addData([force], labelCount);
+                        //if (labelCount >= 600) {
+                        //    cc.removeData();
+                        //}
                         graphWriteCount = 0;
                     }
                 }
@@ -140,6 +142,7 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                 b[i].hvelocity = hvel + b[i].hacceleration * this.steptime;
                 b[i].vvelocity = vvel + b[i].vacceleration * this.steptime;
 
+                console.log(hdistance, vdistance);
                 b[i].x += hdistance;
                 b[i].y += vdistance;
             }
@@ -197,7 +200,7 @@ window.onload = function() {
     var mainChart = new Chart(chartContext).Line(chartData);
 
     //r, m, x, y, hv, vv, ha, va
-    var testBody = new body(15, 1500, 200, 150, 0.0, 0, 0, 0);
+    var testBody = new body(15, 1e12, 200, 150, 0.0, 0, 0, 0);
     var testBody2 = new body(15, 1500, 600, 250, 0.0, 0, 0, 0);
 
     bodies.push(testBody);
