@@ -21,12 +21,14 @@ function calcAngle(o1, o2) {
     return (Math.atan2(diffX, diffY) * 180 / Math.PI);
 }
 
-function calcXforce(angle, force) {
-    return (Math.sin(angle) * force);
+function calcXforce(b1, b2) {
+    xDiff = b1.x - b2.x;
+    return ((G * b1.mass * b2.mass) / Math.pow(xDiff, 2));
 }
 
-function calcYforce(angle, force) {
-    return (Math.cos(angle) * force);
+function calcYforce(b1, b2) {
+    yDiff = b1.y - b2.y;
+    return ((G * b1.mass * b2.mass) / Math.pow(yDiff, 2));;
 }
 
 //Other global variables
@@ -86,6 +88,7 @@ function body(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord, y
 
 function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time between steps
 {
+    //TODO: Hello
     this.canvas = c;
     this.steptime = t;
     console.log("pants");
@@ -103,11 +106,10 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                     console.log(dX, dY);
                     var distance = calcDistance(dX, dY);
                     console.log(distance);
-                    var force = calcForce(b[j].mass, b[i].mass, distance);
-                    var forceX = calcXforce(calcAngle(b[i], b[j]), force);
-                    var forceY = calcYforce(calcAngle(b[i], b[j]), force);
-                    totalVAcc += calcAcc(forceX, b[i].mass);
-                    totalHAcc += calcAcc(forceY, b[i].mass);
+                    var forceX = calcXforce(b[i], b[j]);
+                    var forceY = calcYforce(b[i], b[j]);
+                    totalVAcc += -calcAcc(forceX, b[i].mass);
+                    totalHAcc += -calcAcc(forceY, b[i].mass);
 
                     console.log("totalHAcc: " + totalHAcc + " totalVAcc: " + totalVAcc);
                     console.log(b[i].ID + " " + b[j].ID);
@@ -115,7 +117,7 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                     //console.log("Distance: " + calcDistance(b[i], b[j]));
                     console.log("X component = " + forceX + ", Y component = " + forceY);
                     if (graphWriteCount >= 10 && b[i].ID == 0) {
-                        cc.addData([force], labelCount);
+                        cc.addData([forceX], labelCount);
                         //if (labelCount >= 600) {
                         //    cc.removeData();
                         //}

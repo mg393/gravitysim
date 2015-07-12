@@ -9,14 +9,22 @@ var G = new math.bignumber('6.675e-11');
 var bodies = [];
 var scale = new math.bignumber('1000000'); //One pixel = 1000km or 1000000m
 
-/************
-  TO DELETE
-************/
-var testnum1 = new math.bignumber('6.45e21');
-var testnum2 = new math.bignumber('4.12e20');
+function calcTotalForce(mass1, mass2, distance) { //For graphing rather than actual calcs
+    return (math.multiply((math.multiply(mass1, mass2)), G) / math.pow(distance, 2));
+}
 
-function calcForce(mass1, mass2, distance) {
-    return (math.times((math.times(mass1, mass2)), G) / math.pow(distance, 2));
+function calcXForce(b1, b2) {
+    var diffX = math.subtract(b1.x, b2.x);
+    var xForce = math.multiply((math.multiply(b1.mass, b2.mass)), G) / math.pow(diffX, 2);
+
+    return xForce;
+}
+
+function calcYForce(b1, b2) {
+    var diffY = math.subtract(b1.y, b2.y);
+    var yForce = math.multiply((math.multiply(b1.mass, b2.mass)), G) / math.pow(diffY, 2);
+
+    return yForce;
 }
 
 function calcDistance(dx, dy) {
@@ -27,19 +35,17 @@ function calcAcc(force, mass) {
     return math.divide(force, mass);
 }
 
-function calcAngle(b1, b2) {
+//TODO: remove
+/*function calcAngle(b1, b2) {
     var diffX = math.subtract(b1.x, b2.x);
     var diffY = math.subtract(b1.y, b2.y);
 
     return math.divide(math.multiply(math.atan2(diffX, diffY), 180), math.pi);
-}
+}*/
 
-function calcXforce(angle, force) {
-    return math.multiply(math.sin(angle), force);
-}
-
-function calcYforce(angle, force) {
-    return math.multiply(math.cos(angle), force);
+function collision(b1, b2) {
+    //TODO: Do stuff here
+    return false;
 }
 
 //Other global variables
@@ -82,7 +88,7 @@ function clearBodies() {
 }
 
 //Main code
-function body(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord, y = y coord, hv = horizontal velocity, vv = vertical velocity, ha = horizontal acceleration, va = vertical acceleration
+function body(r, m, x, y, hv, vv, ha, va, s) //r = radius, m = mass, x = x coord, y = y coord, hv = horizontal velocity, vv = vertical velocity, ha = horizontal acceleration, va = vertical acceleration, s = selected (bool)
 {
     this.radius = r;
     this.mass = m;
@@ -94,24 +100,131 @@ function body(r, m, x, y, hv, vv, ha, va) //r = radius, m = mass, x = x coord, y
     this.vacceleration = va;
     this.colour = Please.make_color()[0];
     this.ID = IDcount;
+    this.s = false; //TODO: implement selection colouring and functions
     IDcount++;
 }
+
 
 function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time between steps
 {
     this.canvas = c;
     this.steptime = t;
-    console.log("pants"); //Obligatory inclusion in rewrite
-    if (paused == false) {
-        for (var i = 0; i < b.length; i++) {
-            var totalVAcc = math.bignumber('0');
-            var totalHAcc = math.bignumber('0');
+    this.step = function() {
+        console.log("pants"); //Obligatory inclusion in rewrite
+        if (paused == false) {
+            if (collision == false) { /* TODO: Do stuff here */ }
+            for (var i = 0; i < b.length; i++) {
+                var totalVAcc = math.bignumber('0');
+                var totalHAcc = math.bignumber('0');
 
-            for (var j = 0; j < b.length; j++) {
-                if (i != j) {
+                for (var j = 0; j < b.length; j++) {
+                    if (i != j) {
+                        //Calculate force components
+                        var xForce = calcXForce(b[i], b[j]);
+                        var yForce = calcYForce(b[i], b[j]);
 
+                        //Calculate acceleration from force components
+                        totalHAcc = math.subtract(totalHAcc, calcAcc(xForce, b[i].mass));
+                        totalVAcc = math.subtract(totalVAcc, calcAcc(yForce, b[i].mass));
 
+                        //logging
+                        console.log("totalHAcc: " + math.format(totalHAcc) + " totalVAcc: " + math.format(totalVAcc));
+                        console.log("Body IDs: " + b[i].ID + " " + b[j].ID);
+                        console.log("X distance: " + math.format(math.subtract(b[i].x, b[j].x)));
+                        console.log("Y distance: " + math.format(math.subtract(b[i].y, b[j].y)));
+                        console.log("X component = " + xForce + ", Y component = " + yForce);
+
+                        //Graphing
+                        if (graphWriteCount >= 10 && b[i].ID == 0) {
+                            cc.addData([parseInt(math.format(xForce))], labelCount);
+                            if (labelCount >= 600) {
+                                cc.removeData();
+                            }
+                            graphWriteCount = 0;
+                        }
+                    }
                 }
+
+                //Set acceleration to calculated acceleration
+                b[i].hacceleration = totalHAcc;
+                b[i].vacceleration = totalVAcc;
+
+                //Speed and displacement calcs
+                //S = ut + 0.5at^2
+                var hdistance = math.add(math.multiply(b[i].hvelocity, this.steptime), math.multiply(math.multiply(0.5, b[i].hacceleration), math.pow(this.steptime, 2)));
+                var vdistance = math.add(math.multiply(b[i].vvelocity, this.steptime), math.multiply(math.multiply(0.5, b[i].vacceleration), math.pow(this.steptime, 2)));
+
+                //v = u + at
+                b[i].hvelocity = math.add(b[i].hvelocity, math.multiply(b[i].hacceleration, this.steptime));
+                b[i].vvelocity = math.add(b[i].vvelocity, math.multiply(b[i].vacceleration, this.steptime));
+
+                b[i].x = math.add(b[i].x, hdistance);
+                b[i].y = math.add(b[i].y, vdistance);
             }
+
+            //Add 1 to counts
+            graphWriteCount++;
+            labelCount++;
         }
+
+        //Draw function
+        draw(c, b);
     }
+}
+
+
+function draw(c, b) //C = canvas, b = bodies (array)
+{
+    var context = c.getContext("2d");
+
+    //Clear old stuff:
+    context.clearRect(0, 0, c.width, c.height);
+
+    //Loop through bodies
+    for (var i = 0; i < b.length; i++) {
+        context.fillStyle = b[i].colour;
+        context.strokeStyle = b[i].colour;
+        context.beginPath();
+        context.arc(math.divide(b[i].x, scale), math.divide(b[i].y, scale), b[i].radius, 0, 2 * Math.PI); //TODO: radius scaling
+        context.lineWidth = 1;
+        context.fill();
+        context.stroke();
+    }
+}
+
+function mainloop(sim) //sim = a simulation
+{
+    try {
+        sim.step();
+    } catch (e) {
+        console.log(e);
+    }
+
+    window.requestAnimationFrame(function() {
+        mainloop(sim);
+    });
+}
+
+window.onload = function() {
+    canvas = document.getElementById("canvas");
+
+    canvas.addEventListener("mousedown", function(event) {
+        getPosition(canvas);
+    }, false);
+    chartCanvas = document.getElementById("chartCanvas");
+    chartContext = chartCanvas.getContext("2d");
+
+    var mainChart = new Chart(chartContext).Line(chartData);
+
+    //r, m, x, y, hv, vv, ha, va
+    var testBody = new body(15, math.bignumber('1e29'), math.bignumber('200000000'), math.bignumber('150000000'), math.bignumber('0'), math.bignumber('0'), math.bignumber('0'), math.bignumber('0'));
+    var testBody2 = new body(15, math.bignumber('1500'), math.bignumber('600000000'), math.bignumber('250000000'), math.bignumber('0'), math.bignumber('0'), math.bignumber('0'), math.bignumber('0'));
+
+    bodies.push(testBody);
+    bodies.push(testBody2);
+    mainsim = new simulation(canvas, mainChart, bodies, 5);
+    window.requestAnimationFrame(function() {
+        mainloop(mainsim);
+    });
+
+};
