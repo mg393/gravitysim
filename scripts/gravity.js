@@ -108,8 +108,8 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                     console.log(distance);
                     var forceX = calcXforce(b[i], b[j]);
                     var forceY = calcYforce(b[i], b[j]);
-                    totalVAcc += -calcAcc(forceX, b[i].mass);
-                    totalHAcc += -calcAcc(forceY, b[i].mass);
+                    totalVAcc -= calcAcc(forceX, b[i].mass);
+                    totalHAcc -= calcAcc(forceY, b[i].mass);
 
                     console.log("totalHAcc: " + totalHAcc + " totalVAcc: " + totalVAcc);
                     console.log(b[i].ID + " " + b[j].ID);

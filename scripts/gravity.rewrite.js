@@ -9,25 +9,22 @@ var G = new math.bignumber('6.675e-11');
 var bodies = [];
 var scale = new math.bignumber('1000000'); //One pixel = 1000km or 1000000m
 
-function calcTotalForce(mass1, mass2, distance) { //For graphing rather than actual calcs
-    return (math.multiply((math.multiply(mass1, mass2)), G) / math.pow(distance, 2));
+function calcTotalForce(mass1, mass2, distance) {
+    return (math.multiply(math.multiply(mass1, mass2), G) / math.pow(distance, 2));
 }
 
-function calcXForce(b1, b2) {
-    var diffX = math.subtract(b1.x, b2.x);
-    var xForce = math.multiply((math.multiply(b1.mass, b2.mass)), G) / math.pow(diffX, 2);
-
-    return xForce;
+function calcXForce(force, angle) {
+    return math.multiply(math.sin(angle), force);
 }
 
-function calcYForce(b1, b2) {
-    var diffY = math.subtract(b1.y, b2.y);
-    var yForce = math.multiply((math.multiply(b1.mass, b2.mass)), G) / math.pow(diffY, 2);
-
-    return yForce;
+function calcYForce(force, angle) {
+    return math.multiply(math.cos(angle), force);
 }
 
-function calcDistance(dx, dy) {
+function calcDistance(b1, b2) {
+    var dx = math.subtract(b1.x, b2.x);
+    var dy = math.subtract(b1.y, b2.y);
+
     return math.sqrt(math.subtract(math.pow(dx, 2), math.pow(dy, 2)));
 }
 
@@ -35,13 +32,12 @@ function calcAcc(force, mass) {
     return math.divide(force, mass);
 }
 
-//TODO: remove
-/*function calcAngle(b1, b2) {
+function calcAngle(b1, b2) {
     var diffX = math.subtract(b1.x, b2.x);
     var diffY = math.subtract(b1.y, b2.y);
 
     return math.divide(math.multiply(math.atan2(diffX, diffY), 180), math.pi);
-}*/
+}
 
 function collision(b1, b2) {
     //TODO: Do stuff here
@@ -111,17 +107,23 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
     this.steptime = t;
     this.step = function() {
         console.log("pants"); //Obligatory inclusion in rewrite
-        if (paused == false) {
-            if (collision == false) { /* TODO: Do stuff here */ }
+        if (paused === false) {
+            if (collision === false) { /* TODO: Do stuff here */ }
             for (var i = 0; i < b.length; i++) {
                 var totalVAcc = math.bignumber('0');
                 var totalHAcc = math.bignumber('0');
 
                 for (var j = 0; j < b.length; j++) {
                     if (i != j) {
+                        //Calculate total force
+                        var force = calcTotalForce(b[i], b[j], calcDistance(b[i], b[j]));
+
+                        //Calculate angle between bodies
+                        var angle = calcAngle(b[i], b[j]);
+
                         //Calculate force components
-                        var xForce = calcXForce(b[i], b[j]);
-                        var yForce = calcYForce(b[i], b[j]);
+                        var xForce = calcXForce(force, angle);
+                        var yForce = calcYForce(force, angle);
 
                         //Calculate acceleration from force components
                         totalHAcc = math.subtract(totalHAcc, calcAcc(xForce, b[i].mass));
@@ -135,7 +137,7 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                         console.log("X component = " + xForce + ", Y component = " + yForce);
 
                         //Graphing
-                        if (graphWriteCount >= 10 && b[i].ID == 0) {
+                        if (graphWriteCount >= 10 && b[i].ID === 0) {
                             cc.addData([parseInt(math.format(xForce))], labelCount);
                             if (labelCount >= 600) {
                                 cc.removeData();
@@ -169,7 +171,7 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
 
         //Draw function
         draw(c, b);
-    }
+    };
 }
 
 
