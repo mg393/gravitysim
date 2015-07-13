@@ -1,6 +1,7 @@
 gravitysim
 ==========
+Gravity simulator in JS
 
-changelog
----------
-- Did stuff
+Notes
+-----
+- Doesn't work properly
