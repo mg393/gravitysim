@@ -5,7 +5,7 @@ math.config({
 });
 
 //Physics constants and functions
-var G = new math.bignumber('6.675e-11');
+var G = new math.bignumber('6.67384e-11');
 var bodies = [];
 var scale = new math.bignumber('1000000'); //One pixel = 1000km or 1000000m
 
@@ -22,8 +22,8 @@ function calcYForce(force, angle) {
 }
 
 function calcDistance(b1, b2) {
-    var dx = math.subtract(b1.x, b2.x);
-    var dy = math.subtract(b1.y, b2.y);
+    var dx = math.subtract(math.subset(b1.position, math.index(0)), math.subset(b2.position, math.index(0)));
+    var dy = math.subtract(math.subset(b1.position, math.index(1)), math.subset(b2.position, math.index(1)));
 
     return math.sqrt(math.subtract(math.pow(dx, 2), math.pow(dy, 2)));
 }
@@ -34,8 +34,8 @@ function calcAcc(force, mass) {
 
 function calcAngle(b1, b2) {
     //TODO: fix rounding error
-    var diffX = math.subtract(math.round(b1.x), math.round(b2.x));
-    var diffY = math.subtract(math.round(b1.y), math.round(b2.y));
+    var diffX = math.subtract(math.round(math.subset(b1.position, math.index(0))), math.round(math.subset(b2.position, math.index(0))));
+    var diffY = math.subtract(math.round(math.subset(b1.position, math.index(1))), math.round(math.subset(b2.position, math.index(1))));
 
     console.log(diffX + " " + diffY + " " + math.format(math.atan2(diffX, diffY)));
 
@@ -94,8 +94,7 @@ function body(r, m, x, y, hv, vv, ha, va, s) //r = radius, m = mass, x = x coord
 {
     this.radius = r;
     this.mass = m;
-    this.x = x;
-    this.y = y;
+    this.position = math.matrix([x, y]); //Indices: 0 = x, 1 = y
     this.hvelocity = hv;
     this.vvelocity = vv;
     this.hacceleration = ha;
@@ -122,7 +121,10 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                 for (var j = 0; j < b.length; j++) {
                     if (i != j) {
                         if (collision(b[i], b[j]) === true) {
-                            console.log("Collision");
+                            /* var area = math.add(math.multiply(math.pi, math.pow(b[i].radius, 2)), math.multiply(math.pi, math.pow(b[j].radius, 2)));
+                            b[i].radius = math.sqrt(math.divide(area, math.pi));
+                            b[i].mass = math.add(b[j].mass, b[i].mass); */
+                            console.log("collision!");
                         }
 
                         //Calculate total force
@@ -139,6 +141,7 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                         //Calculate force components
                         var xForce = calcXForce(force, angle);
                         var yForce = calcYForce(force, angle);
+
                         //Calculate acceleration from force components
                         totalHAcc = math.subtract(totalHAcc, calcAcc(xForce, b[i].mass));
                         totalVAcc = math.subtract(totalVAcc, calcAcc(yForce, b[i].mass));
@@ -146,8 +149,8 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                         //logging
                         console.log("totalHAcc: " + math.format(totalHAcc) + " totalVAcc: " + math.format(totalVAcc));
                         console.log("Body IDs: " + b[i].ID + " " + b[j].ID);
-                        console.log("X distance: " + math.format(math.subtract(b[i].x, b[j].x)));
-                        console.log("Y distance: " + math.format(math.subtract(b[i].y, b[j].y)));
+                        console.log("X distance: " + math.format(math.subtract(math.subset(b[i].position, math.index(0)), math.subset(b[j].position, math.index(0)))));
+                        console.log("Y distance: " + math.format(math.subtract(math.subset(b[i].position, math.index(1)), math.subset(b[j].position, math.index(1)))));
                         console.log("X component = " + xForce + ", Y component = " + yForce);
 
                         //Graphing
@@ -174,8 +177,8 @@ function simulation(c, cc, b, t) //c = canvas, cc = chart, b = bodies, t = time 
                 b[i].hvelocity = math.add(b[i].hvelocity, math.multiply(b[i].hacceleration, this.steptime));
                 b[i].vvelocity = math.add(b[i].vvelocity, math.multiply(b[i].vacceleration, this.steptime));
 
-                b[i].x = math.add(b[i].x, hdistance);
-                b[i].y = math.add(b[i].y, vdistance);
+                b[i].position.subset(math.index(0), math.add(math.subset(b[i].position, math.index(0)), hdistance)); //Set X coord
+                b[i].position.subset(math.index(1), math.add(math.subset(b[i].position, math.index(1)), vdistance)); //And Y
             }
 
             //Add 1 to counts
@@ -201,7 +204,7 @@ function draw(c, b) //C = canvas, b = bodies (array)
         context.fillStyle = b[i].colour;
         context.strokeStyle = b[i].colour;
         context.beginPath();
-        context.arc(math.divide(b[i].x, scale), math.divide(b[i].y, scale), math.divide(b[i].radius, scale), 0, 2 * Math.PI);
+        context.arc(math.divide(math.subset(b[i].position, math.index(0)), scale), math.divide(math.subset(b[i].position, math.index(1)), scale), math.divide(b[i].radius, scale), 0, 2 * Math.PI);
         context.lineWidth = 1;
         context.fill();
         context.stroke();
